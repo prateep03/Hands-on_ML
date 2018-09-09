@@ -187,7 +187,9 @@ def feature_scalers_on_DataFrame(housing):
     ])
 
     housing_prepared = full_pipeline.fit_transform(housing)
-    pprint.pprint(housing_prepared.shape)
+    pprint.pprint("housing_prepared shape = %s" % repr(housing_prepared.shape))
+
+    return housing_prepared, full_pipeline
 
 if __name__ == "__main__":
     housing = load_housing_data()
