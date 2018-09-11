@@ -198,7 +198,7 @@ def gb_intuition(doplot=False):
         save_fig("gradient_boosting_plot", CHAPTER_ID)
         plt.show()
 
-gb_intuition(doplot=True)
+gb_intuition()
 
 def gradient_boosting(doplot=False):
     from sklearn.ensemble import GradientBoostingRegressor
