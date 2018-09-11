@@ -80,7 +80,7 @@ def bagging_pasting(X_train, X_val, y_train, y_val, doplot=False):
         plt.show()
 
 
-# bagging_pasting(X_train, X_val, y_train, y_val, doplot=True)
+bagging_pasting(X_train, X_val, y_train, y_val)
 
 """
 Adaboost:
@@ -123,7 +123,7 @@ def adaboost(X_train, X_val, y_train, y_val, doplot=False):
         save_fig("AdaBoost_with_DT", CHAPTER_ID)
         plt.show()
 
-# adaboost(X_train, X_val, y_train, y_val, doplot=True)
+adaboost(X_train, X_val, y_train, y_val)
 
 
 """
@@ -138,15 +138,15 @@ def gb_intuition(doplot=False):
     from sklearn.tree import DecisionTreeRegressor
     from utils import plot_predictions, save_fig
 
-    tree_reg1 = DecisionTreeRegressor(max_depth=5, random_state=42)
+    tree_reg1 = DecisionTreeRegressor(max_depth=2, random_state=42)
     tree_reg1.fit(X, y)
 
     y2 = y - tree_reg1.predict(X)
-    tree_reg2 = DecisionTreeRegressor(max_depth=5, random_state=42)
+    tree_reg2 = DecisionTreeRegressor(max_depth=2, random_state=42)
     tree_reg2.fit(X, y2)
 
     y3 = y2 - tree_reg2.predict(X)
-    tree_reg3 = DecisionTreeRegressor(max_depth=5, random_state=42)
+    tree_reg3 = DecisionTreeRegressor(max_depth=2, random_state=42)
     tree_reg3.fit(X, y3)
 
     X_new = np.array([[0.8]])
@@ -161,44 +161,44 @@ def gb_intuition(doplot=False):
         plot_predictions([tree_reg1], X, y, axes=[-0.5, 0.5, -0.1, 0.8],
                          label="$h_1(x_1)$", style='g-',
                          data_label='Training set')
-        plt.ylabel("$y$", fontsize=16, rotation=0)
+        plt.ylabel("$y$", fontsize=16, rotation=90)
         plt.title("Residuals and tree predictions", fontsize=16)
 
         plt.subplot(322)
         plot_predictions([tree_reg1], X, y, axes=[-0.5, 0.5, -0.1, 0.8],
                          label="$h(x_1) = h_1(x_1)$",
                          data_label='Training set')
-        plt.ylabel("$y$", fontsize=16, rotation=0)
+        plt.ylabel("$y$", fontsize=16, rotation=90)
         plt.title("Ensemble predictions", fontsize=16)
 
         plt.subplot(323)
         plot_predictions([tree_reg2], X, y2, axes=[-0.5, 0.5, -0.1, 0.8],
                          label="$h_2(x_1)$", style='g-',
                          data_style="k+", data_label='Residuals')
-        plt.ylabel("$y - h_1(x_1)$", fontsize=16, rotation=0)
+        plt.ylabel("$y - h_1(x_1)$", fontsize=16, rotation=90)
 
         plt.subplot(324)
         plot_predictions([tree_reg1, tree_reg2], X, y, axes=[-0.5, 0.5, -0.1, 0.8],
                          label="$h(x_1) = h_1(x_1) + h_2(x_1)$")
-        plt.ylabel("$y$", fontsize=16, rotation=0)
+        plt.ylabel("$y$", fontsize=16, rotation=90)
 
         plt.subplot(325)
         plot_predictions([tree_reg3], X, y3, axes=[-0.5, 0.5, -0.1, 0.8],
                          label="$h_3(x_1)$", style='g-',
                          data_style="k+")
-        plt.ylabel("$y - h_1(x_1) - h_2(x_1)$", fontsize=16, rotation=0)
+        plt.ylabel("$y - h_1(x_1) - h_2(x_1)$", fontsize=16, rotation=90)
         plt.xlabel("$x_1", fontsize=16)
 
         plt.subplot(326)
         plot_predictions([tree_reg1, tree_reg2, tree_reg3], X, y, axes=[-0.5, 0.5, -0.1, 0.8],
                          label="$h(x_1) = h_1(x_1) + h_2(x_1) + h_3(x_1)$")
-        plt.ylabel("$y$", fontsize=16, rotation=0)
+        plt.ylabel("$y$", fontsize=16, rotation=90)
         plt.xlabel("$x_1", fontsize=16)
 
         save_fig("gradient_boosting_plot", CHAPTER_ID)
         plt.show()
 
-# gb_intuition(doplot=True)
+gb_intuition(doplot=True)
 
 def gradient_boosting(doplot=False):
     from sklearn.ensemble import GradientBoostingRegressor
@@ -228,4 +228,4 @@ def gradient_boosting(doplot=False):
         save_fig("gbrt_learning_rate_plot", CHAPTER_ID)
         plt.show()
 
-gradient_boosting(doplot=True)
+gradient_boosting()
