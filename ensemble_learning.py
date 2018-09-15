@@ -2,6 +2,7 @@ import numpy as np
 from sklearn.datasets import make_moons
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
+from sklearn.metrics import mean_squared_error
 from matplotlib import pyplot as plt
 
 CHAPTER_ID = "ensembles"
@@ -123,8 +124,7 @@ def adaboost(X_train, X_val, y_train, y_val, doplot=False):
         save_fig("AdaBoost_with_DT", CHAPTER_ID)
         plt.show()
 
-adaboost(X_train, X_val, y_train, y_val)
-
+# adaboost(X_train, X_val, y_train, y_val)
 
 """
 Gradient Boosting(GB)
@@ -198,8 +198,16 @@ def gb_intuition(doplot=False):
         save_fig("gradient_boosting_plot", CHAPTER_ID)
         plt.show()
 
-gb_intuition()
+# gb_intuition()
 
+"""
+Gradient Boosting Regressor(GBRT)
+- `learning_rate` hyperparameter scales the contribution of each tree. If we set it to a low value, we
+   will need more trees(n_estimators) in the ensemble to fit the training set, but the predictions will usually 
+   generalize better. This is a regularization technique called `shrinkage`.
+- to find optimal number of trees, we can use `staged_predict` method to estimate predicted error at each stage 
+   of training(with one tree, two trees etc).
+"""
 def gradient_boosting(doplot=False):
     from sklearn.ensemble import GradientBoostingRegressor
     from utils import plot_predictions, save_fig
@@ -208,22 +216,39 @@ def gradient_boosting(doplot=False):
     X = np.random.rand(100, 1) - 0.5
     y = 3 * X[:, 0] ** 2 + 0.05 * np.random.randn(100)
 
-    gbrt = GradientBoostingRegressor(max_depth=2, n_estimators=3, learning_rate=1.0)
-    gbrt.fit(X, y)
+    gbrt_fast = GradientBoostingRegressor(max_depth=2, n_estimators=3, learning_rate=1.0)
+    gbrt_fast.fit(X, y)
 
     gbrt_slow = GradientBoostingRegressor(max_depth=2, n_estimators=200, learning_rate=0.1)
     gbrt_slow.fit(X, y)
 
+    localX_train, localX_val, localy_train, localy_val = train_test_split(X, y)
+
+    gbrt = GradientBoostingRegressor(max_depth=2, n_estimators=120)
+    gbrt.fit(localX_train, localy_train)
+
+    errors = [mean_squared_error(localy_val, localy_pred) for localy_pred in gbrt.staged_predict(localX_val)]
+
+    best_n_estimators = np.argmin(errors)
+    print("Best n_estimators for GBRT = %d trees\n" % best_n_estimators)
+
+    gbrt_best = GradientBoostingRegressor(max_depth=2, n_estimators=best_n_estimators)
+    gbrt_best.fit(localX_train, localy_train)
+
     if doplot:
         plt.figure(figsize=(11,4))
 
-        plt.subplot(121)
-        plot_predictions([gbrt], X, y, axes=[-0.5, 0.5, -0.1, 0.8], label="Ensemble predictions")
-        plt.title("learning_rate = {}, n_estimators = {}".format(gbrt.learning_rate, gbrt.n_estimators))
+        plt.subplot(131)
+        plot_predictions([gbrt_fast], X, y, axes=[-0.5, 0.5, -0.1, 0.8], label="Ensemble predictions")
+        plt.title("learning_rate = {}, n_estimators = {}".format(gbrt_fast.learning_rate, gbrt_fast.n_estimators))
 
-        plt.subplot(122)
+        plt.subplot(132)
         plot_predictions([gbrt_slow], X, y, axes=[-0.5, 0.5, -0.1, 0.8], label="Ensemble predictions")
-        plt.title("learning_rate = {}, n_estimators = {}".format(gbrt.learning_rate, gbrt.n_estimators))
+        plt.title("learning_rate = {}, n_estimators = {}".format(gbrt_slow.learning_rate, gbrt_slow.n_estimators))
+
+        plt.subplot(133)
+        plot_predictions([gbrt_best], X, y, axes=[-0.5, 0.5, -0.1, 0.8], label="Ensemble predictions")
+        plt.title("Best model({} trees)".format(gbrt_best.n_estimators))
 
         save_fig("gbrt_learning_rate_plot", CHAPTER_ID)
         plt.show()
