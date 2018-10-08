@@ -105,3 +105,11 @@ for country, pos_text in position_text.items():
     plt.plot(pos_data_x, pos_data_y, "ro")
 save_fig('money_happy_scatterplot')
 plt.show()
+
+a = pd.DataFrame(columns=["x1","x2"])
+for i in range(5):
+    a.loc[i] = [np.random.randint(0,10) for n in range(2)]
+print(a)
+
+a.x2 = a.x2.shift(-1)
+print(a)
