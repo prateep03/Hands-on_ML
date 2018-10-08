@@ -4,6 +4,7 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 
 from utils import save_fig
+from textblob import TextBlob
 
 CHAPTER_ID = "kaggle"
 doplot = False
@@ -71,5 +72,41 @@ if doplot:
     plt.xlabel("Video Id")
     plt.ylabel("Count")
     plt.title("Top 5 Videos that trended maximum days in USA")
-    save_fig("top_5_videos_trending_for_maximum_days", CHAPTER_ID)
+    save_fig("yt_top_5_videos_trending_for_maximum_days", CHAPTER_ID)
+    plt.show()
+
+
+'''
+Categorize the Description column into Positive and Negative sentiments using TextBlob
+'''
+
+bloblist_desc = list()
+
+df_usa_descr_str = df_usa["description"].astype(str)
+for row in df_usa_descr_str:
+    blob = TextBlob(row)
+    bloblist_desc.append((row, blob.sentiment.polarity,
+                          blob.sentiment.subjectivity))
+df_usa_polarity_desc = pd.DataFrame(bloblist_desc, columns=["sentence", "sentiment", "polarity"])
+
+def f(df_usa_polarity_desc):
+    val = ''
+    if df_usa_polarity_desc['sentiment'] > 0:
+        val = "positive"
+    elif df_usa_polarity_desc['sentiment'] == 0:
+        val = "neutral"
+    else:
+        val = "negative"
+    if len(val) == 0:
+        raise Exception("invalid sentiment")
+    return val
+
+df_usa_polarity_desc["Sentiment_Type"] = df_usa_polarity_desc.apply(func=f, axis=1)
+
+if doplot:
+    plt.figure(figsize=(10,10))
+    sns.set_style('whitegrid')
+    # ax = sns.countplot(x="Sentiment_Type", data=df_usa_polarity_desc)
+    ax = sns.barplot(x="Sentiment_Type", data=df_usa_polarity_desc, estimator=lambda x: sum(x == 'positive') * 100.0 / len(x))
+    # save_fig("yt_sentiment_types", CHAPTER_ID)
     plt.show()
