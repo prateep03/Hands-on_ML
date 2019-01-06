@@ -66,7 +66,7 @@ y = np.c_[country_stats["Life satisfaction"]]
 
 # Visualize the data
 country_stats.plot(kind='scatter', x="GDP per capita", y='Life satisfaction')
-# plt.show()
+plt.show()
 
 # Select a linear model
 model = sklearn.linear_model.LinearRegression()
